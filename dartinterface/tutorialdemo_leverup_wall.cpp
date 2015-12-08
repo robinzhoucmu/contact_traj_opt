@@ -1,12 +1,12 @@
 #include "dart/dart.h"
-
+#include "dart-interface.h"
 const double default_shape_density = 1000; // kg/m^3
 const double default_shape_height  = 0.03;  // m
 const double default_shape_width   = 0.1; // m
 const double default_skin_thickness = 1e-3; // m
 
 //const double default_start_height = 0.4;  // m
-const double default_start_height = 0.1;  // m
+const double default_start_height = 0.4;  // m
 
 const double minimum_start_v = 2.5; // m/s
 const double maximum_start_v = 4.0; // m/s
@@ -39,6 +39,7 @@ class MyWindow : public dart::gui::SimWindow {
     mSkelCount(0) 
   {    
     setWorld(world);
+    // world->getConstraintSolver()->setCollisionDetector(new dart::collision::FCLCollisionDetector());
   }
 
   void keyboard(unsigned char key, int x, int y) override
@@ -76,8 +77,10 @@ class MyWindow : public dart::gui::SimWindow {
     int numIter = mDisplayTimeout / (mWorld->getTimeStep() * 1000);
     if (mSimulating)
     {
-      for (int i = 0; i < numIter; i++)
-        timeStepping();
+      for (int i = 0; i < numIter; i++) {
+	//printContactInfo();
+	timeStepping();
+      }
     }
     glutPostRedisplay();
     glutTimerFunc(mDisplayTimeout, refreshTimer, _val);
@@ -85,7 +88,6 @@ class MyWindow : public dart::gui::SimWindow {
   
   void timeStepping() override 
   {
-    printContactInfo();
     // Step the simulation forward
     SimWindow::timeStepping();
   }
@@ -99,8 +101,12 @@ class MyWindow : public dart::gui::SimWindow {
       const dart::collision::Contact& contact = detector->getContact(i);
       // Print out contact information.
       std::cout << "Contact #" << i << std::endl;
-      std::cout << "Point: "<< contact.point << std::endl;
-      std::cout << "Normal: " << contact.normal << std::endl;
+      std::cout << "Point: "<< std::endl;
+      std::cout <<  contact.point << std::endl;
+      std::cout << "Normal: " << std::endl;
+      std::cout << contact.normal << std::endl;
+      std::cout << "Penetration Depth: " << std::endl;
+      std::cout << contact.penetrationDepth << std::endl;
     }
   }
   /// Add an object to the world and toss it at the wall
@@ -157,7 +163,7 @@ class MyWindow : public dart::gui::SimWindow {
     double speed = default_start_v;
     double angular_speed = default_start_w;
 
-    angle = -M_PI/2;
+    angle = -M_PI/4;
     angular_speed = 0.0;
 
     Eigen::Vector3d v = speed * Eigen::Vector3d(cos(angle), 0.0, sin(angle));
