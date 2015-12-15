@@ -53,7 +53,7 @@ void EnvModel::AddTwoBodiesContactInfo(dart::dynamics::BodyNodePtr _br,
   // Check if already in collision (distance <=0)
   // Todo (Jiaji): use dart's eps?
   if (dist_pair.distance <=0) {
-    AddTwoBodiesContactInfoFromDetector(_br, _bo, _contactInfos);
+    int num_collisions = AddTwoBodiesContactInfoFromDetector(_br, _bo, _contactInfos);
   } else {  
     // Todo(Jiaji): This is a total hack...
     // When the two bodies are away from each other, we move the base of the robot
@@ -63,16 +63,25 @@ void EnvModel::AddTwoBodiesContactInfo(dart::dynamics::BodyNodePtr _br,
     Eigen::Vector3d trans = dist_pair.point2 - dist_pair.point1;
     Eigen::Isometry3d tf = Eigen::Isometry3d::Identity();
     tf.translation() = trans;
+    
     // Move the robot base.
     mRobot->getJoint(0)->setTransformFromParentBodyNode(tf);
+    
     // Call collision detector now.
-    AddTwoBodiesContactInfoFromDetector(_br, _bo, _contactInfos);
+    int num_collisions = AddTwoBodiesContactInfoFromDetector(_br, _bo, _contactInfos);
+    
+    // Todo(Jiaji): Write something better....
+    // Reset distance value.
+    for (int i = 0; i < num_collisions; ++i) {
+      (*_contactInfos)[_contactInfos->size() - i - 1].distance = dist_pair.distance;
+    }
+    
     // Move the robot base back.
     mRobot->getJoint(0)->setTransformFromParentBodyNode(tf.inverse());
   }
 }
 
-void EnvModel::AddTwoBodiesContactInfoFromDetector(dart::dynamics::BodyNodePtr _br,
+int EnvModel::AddTwoBodiesContactInfoFromDetector(dart::dynamics::BodyNodePtr _br,
 						   dart::dynamics::BodyNodePtr _bo,
 						   std::vector<ContactInfo3d>* _contactInfos) {
     mDetector->detectCollision(_br, _bo);
@@ -82,6 +91,7 @@ void EnvModel::AddTwoBodiesContactInfoFromDetector(dart::dynamics::BodyNodePtr _
       ContactInfo3d contact_i = GetSingleCollisionInfo(mDetector, i);
       _contactInfos->push_back(contact_i);
     }
+    return num_collisions;
 }
 
 ContactInfo3d EnvModel::GetSingleCollisionInfo(

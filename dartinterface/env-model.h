@@ -67,7 +67,7 @@ class EnvModel {
 			       dart::dynamics::BodyNodePtr _bo,
 			       std::vector<ContactInfo3d>* _contactInfos);
  
-  void AddTwoBodiesContactInfoFromDetector(dart::dynamics::BodyNodePtr _br,
+  int AddTwoBodiesContactInfoFromDetector(dart::dynamics::BodyNodePtr _br,
 					   dart::dynamics::BodyNodePtr _bo,
 					   std::vector<ContactInfo3d>* _contactInfos);
 
