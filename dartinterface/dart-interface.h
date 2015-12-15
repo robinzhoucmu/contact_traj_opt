@@ -5,12 +5,21 @@
 class DartInterface {
  public:
   DartInterface(){};
-  void SetUpRobot();
-  void SetUpObject();
+  void SetRobotQ(const Eigen::VectorXd &_positions);
+  void SetObjectQ(const Eigen::VectorXd &_positions);
   
   // Interface to equation of motion parameters.
-  Eigen::MatrixXd& GetObjectMass();
-  Eigen::VectorXd& GetCoriolisAndGravityForce();
+  Eigen::MatrixXd& GetObjectMass() const;
+  Eigen::VectorXd& GetCoriolisAndGravityForce() const;
+
+  // Todo(Jiaji): Merge into one Jacobian matrix??
+  std::vector<dart::math::Jacobian> GetAllJacobians() const;
+  
+  std::vector<double> GetAllContactDistances() const;
+  
+  // Asking mEnvModel to extract contact informations.
+  void ComputeContact();
+
  private:
   EnvModel mEnvModel;
   

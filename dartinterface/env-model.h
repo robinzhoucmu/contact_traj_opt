@@ -30,7 +30,7 @@ struct ContactInfo3d{
     bodyNode1 = _bd1;
     bodyNode2 = _bd2;
   }
-  void GenerateFrictionBasis(int _nBasis) {
+  void GenerateFrictionBasis(int _nBasis = 10) {
   
   }
 };
@@ -47,11 +47,7 @@ class EnvModel {
   void SetObjectQ(const Eigen::VectorXd &_positions);
   Eigen::VectorXd GetRobotQ() const;
   Eigen::VectorXd GetObjectQ() const;
-  
-  // Extract Jacobian matrix (world frame) of a point 
-  // on the object.
-  dart::math::Jacobian GetObjectPointJacobian(Eigen::Vector3d _pt);
-  
+    
   // Extract all pairs of body node contact information between robot and object.
   void ExtractObjectRobotContactPairs();
   
@@ -59,6 +55,11 @@ class EnvModel {
   // external environment contacts.
   void ExtractObjectEnvironmentContactPairs();
 
+  Eigen::MatrixXd& GetObjectMass() const;
+  Eigen::VectorXd& GetCoriolisAndGravityForce() const;
+  
+  const std::vector<ContactInfo3d>& ContactInfos() const; 
+ 
  private:
 
   // Add ContactInfo among a body of the robot (_br) and the object body (_bo).
@@ -71,6 +72,10 @@ class EnvModel {
 					   std::vector<ContactInfo3d>* _contactInfos);
 
   ContactInfo3d GetSingleCollisionInfo(dart::collision::CollisionDetector* _detector, int _contactId);
+
+  // Extract Jacobian matrix (world frame) of a point 
+  // on the object.
+  dart::math::Jacobian GetObjectPointJacobian(Eigen::Vector3d _pt);
 
   dart::dynamics::SkeletonPtr mRobot;
   dart::dynamics::SkeletonPtr mObject; 

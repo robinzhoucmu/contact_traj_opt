@@ -17,6 +17,18 @@ Eigen::VectorXd EnvModel::GetObjectQ() const {
   return mObject->getPositions();
 }
 
+Eigen::MatrixXd& EnvModel::GetObjectMass() const {
+  return mObject->getMassMatrix();
+}
+
+Eigen::VectorXd& EnvModel::GetCoriolisAndGravityForce() const {
+  return mObject->getCoriolisAndGravityForce();
+}
+
+const std::vector<ContactInfo3d>& ContactInfos() const {
+  return mContactInfos;
+}
+
 dart::math::Jacobian EnvModel::GetObjectPointJacobian(Eigen::Vector3d _pt) {
   // Todo(Jiaji): Pass in body node as a parameter when the object is no longer
   // a single rigid body.
@@ -46,6 +58,8 @@ void EnvModel::AddTwoBodiesContactInfo(dart::dynamics::BodyNode _br,
     mRobot->getJoint(0)->setTransformFromParentBodyNode(tf);
     // Call collision detector now.
     AddTwoBodiesContactInfoFromDetector(_br, _bo, _contactInfos);
+    // Move the robot base back.
+    mRobot->getJoint(0)->setTransformFromParentBodyNode(tf.inverse());
   }
 }
 
@@ -78,5 +92,14 @@ ContactInfo3d EnvModel::GetSingleCollisionInfo(
 
   // When in contact, assign the distance as penetration depth.
   contact_res.distance = contact_dart.penetrationDepth;
+  
+  // Get Jacobian.
+  contact_res.Jc = GetObjectPointJacobian(contact_res.pt_2);
+  
+  // Generate friction basis.
+  contact_res.GenerateFrictionBasis();
+
   return contact_res;
 }
+
+
