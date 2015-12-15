@@ -55,8 +55,8 @@ class EnvModel {
   // external environment contacts.
   void ExtractObjectEnvironmentContactPairs();
 
-  Eigen::MatrixXd& GetObjectMass() const;
-  Eigen::VectorXd& GetCoriolisAndGravityForce() const;
+  const Eigen::MatrixXd& GetObjectMass() const;
+  const Eigen::VectorXd& GetCoriolisAndGravityForce() const;
   
   const std::vector<ContactInfo3d>& ContactInfos() const; 
  
@@ -76,7 +76,7 @@ class EnvModel {
   // Extract Jacobian matrix (world frame) of a point 
   // on the object.
   dart::math::Jacobian GetObjectPointJacobian(Eigen::Vector3d _pt);
-
+  std::vector< dart::dynamics::SkeletonPtr > mExtContacts;
   dart::dynamics::SkeletonPtr mRobot;
   dart::dynamics::SkeletonPtr mObject; 
   std::vector<ContactInfo3d> mContactInfos;

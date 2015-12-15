@@ -2,7 +2,7 @@
 #include <assert.h>
 
 void EnvModel::SetRobotQ(const Eigen::VectorXd& _positions) {
-  mRobot->setPosition(_positions);
+  mRobot->setPositions(_positions);
 }
 
 void EnvModel::SetObjectQ(const Eigen::VectorXd& _positions) {
@@ -17,17 +17,26 @@ Eigen::VectorXd EnvModel::GetObjectQ() const {
   return mObject->getPositions();
 }
 
-Eigen::MatrixXd& EnvModel::GetObjectMass() const {
+const Eigen::MatrixXd& EnvModel::GetObjectMass() const {
   return mObject->getMassMatrix();
 }
 
-Eigen::VectorXd& EnvModel::GetCoriolisAndGravityForce() const {
-  return mObject->getCoriolisAndGravityForce();
+const Eigen::VectorXd& EnvModel::GetCoriolisAndGravityForce() const {
+  return mObject->getCoriolisAndGravityForces();
 }
 
-const std::vector<ContactInfo3d>& ContactInfos() const {
+const std::vector<ContactInfo3d>& EnvModel::ContactInfos() const {
   return mContactInfos;
 }
+
+void EnvModel::ExtractObjectRobotContactPairs() {
+
+}
+
+void EnvModel::ExtractObjectEnvironmentContactPairs() {
+}
+
+
 
 dart::math::Jacobian EnvModel::GetObjectPointJacobian(Eigen::Vector3d _pt) {
   // Todo(Jiaji): Pass in body node as a parameter when the object is no longer
@@ -36,14 +45,14 @@ dart::math::Jacobian EnvModel::GetObjectPointJacobian(Eigen::Vector3d _pt) {
     getWorldJacobian(mObject->getBodyNode(mObject->getNumBodyNodes() - 1), _pt);
 }
 
-void EnvModel::AddTwoBodiesContactInfo(dart::dynamics::BodyNode _br,
-				       dart::dynamics::BodyNode _bo,
+void EnvModel::AddTwoBodiesContactInfo(dart::dynamics::BodyNodePtr _br,
+				       dart::dynamics::BodyNodePtr _bo,
 				       std::vector<ContactInfo3d>* _contactInfos) {
   // First compute the distance information.
-  dart::collision::DistancePair = mDetector->computeDistancePair(_br, _bo);
+  dart::collision::DistancePair dist_pair = mDetector->computeDistancePair(_br, _bo);
   // Check if already in collision (distance <=0)
   // Todo (Jiaji): use dart's eps?
-  if (DistancePair.distance <=0) {
+  if (dist_pair.distance <=0) {
     AddTwoBodiesContactInfoFromDetector(_br, _bo, _contactInfos);
   } else {  
     // Todo(Jiaji): This is a total hack...
@@ -51,7 +60,7 @@ void EnvModel::AddTwoBodiesContactInfo(dart::dynamics::BodyNode _br,
     // such that they are definitely in collision and subsequently get the contactInfo.
     
     // Pointing from the closet point on the robot to the closet point on the object.
-    Eigen::Vector3d trans = DistancePair.pt_2 - DistancePair.pt_1;
+    Eigen::Vector3d trans = dist_pair.point2 - dist_pair.point1;
     Eigen::Isometry3d tf = Eigen::Isometry3d::Identity();
     tf.translation() = trans;
     // Move the robot base.
@@ -90,8 +99,8 @@ ContactInfo3d EnvModel::GetSingleCollisionInfo(
   // Get the normal.
   contact_res.normal = contact_dart.normal;
 
-  // When in contact, assign the distance as penetration depth.
-  contact_res.distance = contact_dart.penetrationDepth;
+  // When in contact, assign the distance as (negative) penetration depth.
+  contact_res.distance = -contact_dart.penetrationDepth;
   
   // Get Jacobian.
   contact_res.Jc = GetObjectPointJacobian(contact_res.pt_2);

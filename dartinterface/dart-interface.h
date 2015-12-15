@@ -9,18 +9,22 @@ class DartInterface {
   void SetObjectQ(const Eigen::VectorXd &_positions);
   
   // Interface to equation of motion parameters.
-  Eigen::MatrixXd& GetObjectMass() const;
-  Eigen::VectorXd& GetCoriolisAndGravityForce() const;
+  const Eigen::MatrixXd& GetObjectMass() const;
+  const Eigen::VectorXd& GetCoriolisAndGravityForce() const;
 
   // Todo(Jiaji): Merge into one Jacobian matrix??
-  std::vector<dart::math::Jacobian> GetAllJacobians() const;
+  std::vector< Eigen::Matrix<double, 6, Eigen::Dynamic> > GetAllJacobians() const;
   
   std::vector<double> GetAllContactDistances() const;
+
+  std::vector< Eigen::Vector3d > GetAllNormals() const;
+
+  std::vector< std::vector<Eigen::Vector3d> > GetAllFrictionBasis() const; 
   
   // Asking mEnvModel to extract contact informations.
   void ComputeContact();
 
  private:
-  EnvModel mEnvModel;
+  std::shared_ptr<EnvModel> mEnvModel;
   
 };
