@@ -40,7 +40,7 @@ void EnvModel::ExtractObjectRobotContactPairs() {
 
 void EnvModel::ExtractObjectEnvironmentContactPairs() {
   for (int i = 0; i < mExtContacts.size(); ++i) {
-    AddSkeletonToObjectContacts(mExtContacts[i], mObject, &mContactInfos);
+    AddSkeletonToObjectContact(mExtContacts[i], mObject, &mContactInfos);
   }
 }
 
@@ -49,7 +49,7 @@ void EnvModel::AddSkeletonToObjectContact(dart::dynamics::SkeletonPtr _skExt,
 					  dart::dynamics::SkeletonPtr _skObj,
 					  std::vector<ContactInfo3d>* _contactInfos) {
   int numBodies = _skExt->getNumBodyNodes();
-  for (int i = 0; i< numRobotBodies; ++i) {
+  for (int i = 0; i< numBodies; ++i) {
     AddTwoBodiesContactInfo(_skExt->getBodyNode(i), _skObj->getBodyNode(0), _contactInfos);
   }
 }
