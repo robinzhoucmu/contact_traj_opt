@@ -40,8 +40,7 @@ struct ContactInfo3d{
 // could be a multi-link robot. 
 class EnvModel {
  public:
-  EnvModel(){};
-  
+  EnvModel();
   // Configuration set() and get().
   void SetRobotQ(const Eigen::VectorXd &_positions);
   void SetObjectQ(const Eigen::VectorXd &_positions);
@@ -61,7 +60,11 @@ class EnvModel {
   const std::vector<ContactInfo3d>& ContactInfos() const; 
  
  private:
-
+  // Extract contactinfos from all bodies of _skExt to object skeleton(single body).
+  void AddSkeletonToObjectContact(dart::dynamics::SkeletonPtr _skExt, 
+				  dart::dynamics::SkeletonPtr _skObj,
+				  std::vector<ContactInfo3d>* _contactInfos);
+  
   // Add ContactInfo among a body of the robot (_br) and the object body (_bo).
   void AddTwoBodiesContactInfo(dart::dynamics::BodyNodePtr _br,
 			       dart::dynamics::BodyNodePtr _bo,

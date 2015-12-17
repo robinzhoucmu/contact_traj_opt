@@ -1,6 +1,10 @@
 #include "env-model.h"
 #include <assert.h>
 
+EnvModel::EnvModel() {
+  mContactInfos.clear();
+}
+
 void EnvModel::SetRobotQ(const Eigen::VectorXd& _positions) {
   mRobot->setPositions(_positions);
 }
@@ -30,10 +34,24 @@ const std::vector<ContactInfo3d>& EnvModel::ContactInfos() const {
 }
 
 void EnvModel::ExtractObjectRobotContactPairs() {
-
+  AddSkeletonToObjectContact(mRobot, mObject, &mContactInfos);
 }
 
+
 void EnvModel::ExtractObjectEnvironmentContactPairs() {
+  for (int i = 0; i < mExtContacts.size(); ++i) {
+    AddSkeletonToObjectContacts(mExtContacts[i], mObject, &mContactInfos);
+  }
+}
+
+// Extract contactinfos from all bodies of _skExt to object skeleton(single body).
+void EnvModel::AddSkeletonToObjectContact(dart::dynamics::SkeletonPtr _skExt, 
+					  dart::dynamics::SkeletonPtr _skObj,
+					  std::vector<ContactInfo3d>* _contactInfos) {
+  int numBodies = _skExt->getNumBodyNodes();
+  for (int i = 0; i< numRobotBodies; ++i) {
+    AddTwoBodiesContactInfo(_skExt->getBodyNode(i), _skObj->getBodyNode(0), _contactInfos);
+  }
 }
 
 
