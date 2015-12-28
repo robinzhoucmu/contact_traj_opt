@@ -13,12 +13,20 @@ class DartInterface {
   const Eigen::VectorXd& GetCoriolisAndGravityForce() const;
 
   // Todo(Jiaji): Merge into one Jacobian matrix??
+  // [GL] With K contacts, the vector has K elements 
+  // and each element is a (mxn) matrix where m = q (generalized coordinate), n = 6. 
+  // Transforms K world contact wrenches to generalized force. 
+  // *q = objectDOF + robotDOF
+  // or can we separate q and have GetAllRobotJacobians() and GetAllObjectJacobians()?
   std::vector< Eigen::Matrix<double, 6, Eigen::Dynamic> > GetAllJacobians() const;
   
   std::vector<double> GetAllContactDistances() const;
 
+  //  [GL] In world coordinate, right?
   std::vector< Eigen::Vector3d > GetAllNormals() const;
-
+  
+  // [GL] I think this should be a vector of K elements where 
+  // each element is a 3xd matrix d = number of basis. 
   std::vector< std::vector<Eigen::Vector3d> > GetAllFrictionBasis() const; 
   
   // Asking mEnvModel to extract contact informations.
