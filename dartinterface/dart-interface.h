@@ -4,6 +4,7 @@
 
 class DartInterface {
  public:
+  // [GL] should the constructor take in world, robot, and obj? or take in env_model that has all the info? 
   DartInterface(){};
   void SetRobotQ(const Eigen::VectorXd &_positions);
   void SetObjectQ(const Eigen::VectorXd &_positions);
@@ -25,12 +26,16 @@ class DartInterface {
   //  [GL] In world coordinate, right?
   std::vector< Eigen::Vector3d > GetAllNormals() const;
   
-  // [GL] I think this should be a vector of K elements where 
-  // each element is a 3xd matrix d = number of basis. 
+  // [GL] a vector of K (number of contacts) elements where 
+  // each element is a vector of d(number of basis) elements  
   std::vector< std::vector<Eigen::Vector3d> > GetAllFrictionBasis() const; 
   
   // Asking mEnvModel to extract contact informations.
   void ComputeContact();
+
+  const int obj_dof; 
+  const int robot_dof;
+  const int num_contacts;
 
  private:
   std::shared_ptr<EnvModel> mEnvModel;
