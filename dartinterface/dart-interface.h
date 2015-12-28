@@ -4,8 +4,14 @@
 
 class DartInterface {
  public:
-  // [GL] should the constructor take in world, robot, and obj? or take in env_model that has all the info? 
+  DartInterface(dart::dynamics::SkeletonPtr _robot, 
+		dart::dynamics::SkeletonPtr _object);
+
+  DartInterface(dart::dynamics::SkeletonPtr _robot, 
+		dart::dynamics::SkeletonPtr _object,	   
+		std::vector< dart::dynamics::SkeletonPtr > _extContacts);
   DartInterface(){};
+  
   void SetRobotQ(const Eigen::VectorXd &_positions);
   void SetObjectQ(const Eigen::VectorXd &_positions);
   
@@ -30,14 +36,15 @@ class DartInterface {
   // each element is a vector of d(number of basis) elements  
   std::vector< std::vector<Eigen::Vector3d> > GetAllFrictionBasis() const; 
   
+  int obj_dof() {return mobj_dof;}
+  int robot_dof() {return mrobot_dof;}
+  int num_contacts() {return mnum_contacts;}
   // Asking mEnvModel to extract contact informations.
   void ComputeContact();
 
-  const int obj_dof; 
-  const int robot_dof;
-  const int num_contacts;
-
  private:
   std::shared_ptr<EnvModel> mEnvModel;
-  
+  int mobj_dof; 
+  int mrobot_dof;
+  int mnum_contacts;
 };

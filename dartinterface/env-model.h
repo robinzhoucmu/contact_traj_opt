@@ -40,8 +40,11 @@ struct ContactInfo3d{
 // could be a multi-link robot. 
 class EnvModel {
  public:
-
-  EnvModel(WorldPtr world, SkeletonPtr robot, SkeletonPtr object);
+  EnvModel();
+  EnvModel(dart::dynamics::SkeletonPtr _robot, dart::dynamics::SkeletonPtr _object);
+  EnvModel(dart::dynamics::SkeletonPtr _robot, dart::dynamics::SkeletonPtr _object,
+	   std::vector< dart::dynamics::SkeletonPtr > _extContacts);
+  
   // Configuration set() and get().
   void SetRobotQ(const Eigen::VectorXd &_positions);
   void SetObjectQ(const Eigen::VectorXd &_positions);

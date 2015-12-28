@@ -5,6 +5,20 @@ EnvModel::EnvModel() {
   mContactInfos.clear();
 }
 
+EnvModel::EnvModel(dart::dynamics::SkeletonPtr _robot, 
+		   dart::dynamics::SkeletonPtr _object) {
+  mRobot = _robot;
+  mObject = _object;
+}
+
+EnvModel::EnvModel(dart::dynamics::SkeletonPtr _robot, 
+		   dart::dynamics::SkeletonPtr _object,
+		   std::vector< dart::dynamics::SkeletonPtr > _extContacts) {
+  mRobot = _robot;
+  mObject = _object;
+  mExtContacts = _extContacts;
+}
+
 void EnvModel::SetRobotQ(const Eigen::VectorXd& _positions) {
   mRobot->setPositions(_positions);
 }

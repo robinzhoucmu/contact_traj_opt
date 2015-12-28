@@ -1,4 +1,14 @@
 #include "dart-interface.h"
+DartInterface::DartInterface(dart::dynamics::SkeletonPtr _robot, 
+			     dart::dynamics::SkeletonPtr _object) {
+  mEnvModel = std::make_shared<EnvModel> (_robot, _object);
+}
+
+DartInterface::DartInterface(dart::dynamics::SkeletonPtr _robot, 
+			     dart::dynamics::SkeletonPtr _object,	   
+			     std::vector< dart::dynamics::SkeletonPtr > _extContacts) {
+  mEnvModel = std::make_shared<EnvModel> (_robot, _object, _extContacts);
+}
 
 const Eigen::MatrixXd& DartInterface::GetObjectMass() const {
   return mEnvModel->GetObjectMass();
