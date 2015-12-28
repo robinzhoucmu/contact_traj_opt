@@ -8,7 +8,6 @@ struct ContactInfo3d{
 
   // typedef Eigen::Matrix<double, 6, Eigen::Dynamic> Jacobian;
   dart::math::Jacobian Jc;
-  Eigen::MatrixXd::Jacobian Jc; // numObjDOF*6 matrixj (transform world contact wrench to generalized coordinate)
 
   // Closet point of body 1 to body 2.
   Eigen::Vector3d pt_1;
