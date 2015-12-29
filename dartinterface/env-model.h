@@ -1,6 +1,6 @@
 #include "dart/dart.h"
 struct ContactInfo3d{
-  // First body node (robot body node)
+  // Reserved convention: First body node (robot body node)
   dart::dynamics::WeakBodyNodePtr bodyNode1;
 
   // Second body node (object body node)
@@ -20,7 +20,7 @@ struct ContactInfo3d{
   double distance;
 
   // Pointing from body2 to body 1.
-  Eigen::Vector3d normal;           // world coordinate? 
+  Eigen::Vector3d normal;           // world coordinate? [Jiaji]: Yes.
   
   // Friciton basis in the tangent plane.
   std::vector<Eigen::Vector3d> friction_basis;
@@ -75,8 +75,8 @@ class EnvModel {
 			       std::vector<ContactInfo3d>* _contactInfos);
  
   int AddTwoBodiesContactInfoFromDetector(dart::dynamics::BodyNodePtr _br,
-					   dart::dynamics::BodyNodePtr _bo,
-					   std::vector<ContactInfo3d>* _contactInfos);
+					  dart::dynamics::BodyNodePtr _bo,
+					  std::vector<ContactInfo3d>* _contactInfos);
 
   ContactInfo3d GetSingleCollisionInfo(dart::collision::CollisionDetector* _detector, int _contactId);
 

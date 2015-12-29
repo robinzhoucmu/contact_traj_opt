@@ -114,16 +114,17 @@ void EnvModel::AddTwoBodiesContactInfo(dart::dynamics::BodyNodePtr _br,
 }
 
 int EnvModel::AddTwoBodiesContactInfoFromDetector(dart::dynamics::BodyNodePtr _br,
-						   dart::dynamics::BodyNodePtr _bo,
-						   std::vector<ContactInfo3d>* _contactInfos) {
-    mDetector->detectCollision(_br, _bo);
-    // Todo(Jiaji): only allow single contact between two bodies?
-    int num_collisions = mDetector->getNumContacts();
-    for (int i = 0; i < num_collisions; ++i ) {
-      ContactInfo3d contact_i = GetSingleCollisionInfo(mDetector, i);
-      _contactInfos->push_back(contact_i);
-    }
-    return num_collisions;
+						  dart::dynamics::BodyNodePtr _bo,
+						  std::vector<ContactInfo3d>* _contactInfos) {
+  // Reserved convention: The second parameter is object. Body 2 is object.
+  mDetector->detectCollision(_br, _bo);
+  // Todo(Jiaji): only allow single contact between two bodies?
+  int num_collisions = mDetector->getNumContacts();
+  for (int i = 0; i < num_collisions; ++i ) {
+    ContactInfo3d contact_i = GetSingleCollisionInfo(mDetector, i);
+    _contactInfos->push_back(contact_i);
+  }
+  return num_collisions;
 }
 
 ContactInfo3d EnvModel::GetSingleCollisionInfo(
