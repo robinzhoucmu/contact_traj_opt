@@ -11,6 +11,8 @@ message(STATUS "${CMAKE_PACKAGE_PATH}")
 add_executable(test tutorialdemo_leverup_wall.cpp dart-interface.cpp env-model.cpp)
 target_link_libraries(test dart)
 
+add_executable(test_urdf demo_urdf.cpp dart-interface.cpp env-model.cpp)
+target_link_libraries(test_urdf dart)
 #foreach(tutorial ${tutorials_src})
 #  get_filename_component(tutorial_base ${tutorial} NAME_WE)
 #  message(STATUS "Adding tutorial: ${tutorial_base}")
